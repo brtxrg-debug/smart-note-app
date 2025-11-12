@@ -25,7 +25,18 @@
             <div class="notes-section">
                 <div class="notes-header">
                     <h2>Your Notes</h2>
-                    <button id="newNoteBtn" class="btn btn-primary">+ New Note</button>
+                    <div class="header-controls">
+                        <div class="sort-container">
+                            <label for="sortSelect">Sort by:</label>
+                            <select id="sortSelect" class="sort-select">
+                                <option value="dateDesc">Newest First</option>
+                                <option value="dateAsc">Oldest First</option>
+                                <option value="titleAsc">Title (A-Z)</option>
+                                <option value="titleDesc">Title (Z-A)</option>
+                            </select>
+                        </div>
+                        <button id="newNoteBtn" class="btn btn-primary">+ New Note</button>
+                    </div>
                 </div>
                 
                 <div id="notesContainer" class="notes-grid">

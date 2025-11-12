@@ -3,6 +3,7 @@ class NotesApp {
         this.notes = [];
         this.currentNoteId = null;
         this.searchQuery = '';
+        this.sortBy = 'dateDesc';
         
         this.init();
     }
@@ -36,6 +37,7 @@ class NotesApp {
         const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
         const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
         const deleteModal = document.getElementById('deleteModal');
+        const sortSelect = document.getElementById('sortSelect');
 
         newNoteBtn.addEventListener('click', () => this.openNoteModal());
         closeModal.addEventListener('click', () => this.closeNoteModal());
@@ -43,6 +45,7 @@ class NotesApp {
         noteForm.addEventListener('submit', (e) => this.handleSubmit(e));
         searchInput.addEventListener('input', (e) => this.handleSearch(e));
         clearSearch.addEventListener('click', () => this.clearSearch());
+        sortSelect.addEventListener('change', (e) => this.handleSort(e));
         
         closeDeleteModal.addEventListener('click', () => this.closeDeleteModal());
         cancelDeleteBtn.addEventListener('click', () => this.closeDeleteModal());
@@ -185,16 +188,40 @@ class NotesApp {
         this.renderNotes();
     }
 
+    handleSort(e) {
+        this.sortBy = e.target.value;
+        this.renderNotes();
+    }
+
     getFilteredNotes() {
-        if (!this.searchQuery) {
-            return this.notes;
+        let filtered = this.notes;
+
+        if (this.searchQuery) {
+            filtered = filtered.filter(note => {
+                const titleMatch = note.title.toLowerCase().includes(this.searchQuery);
+                const contentMatch = note.content.toLowerCase().includes(this.searchQuery);
+                return titleMatch || contentMatch;
+            });
         }
 
-        return this.notes.filter(note => {
-            const titleMatch = note.title.toLowerCase().includes(this.searchQuery);
-            const contentMatch = note.content.toLowerCase().includes(this.searchQuery);
-            return titleMatch || contentMatch;
-        });
+        return this.sortNotes(filtered);
+    }
+
+    sortNotes(notes) {
+        const sorted = [...notes];
+
+        switch (this.sortBy) {
+            case 'dateDesc':
+                return sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            case 'dateAsc':
+                return sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            case 'titleAsc':
+                return sorted.sort((a, b) => a.title.toLowerCase().localeCompare(b.title.toLowerCase()));
+            case 'titleDesc':
+                return sorted.sort((a, b) => b.title.toLowerCase().localeCompare(a.title.toLowerCase()));
+            default:
+                return sorted;
+        }
     }
 
     highlightText(text, query) {
@@ -263,14 +290,21 @@ class NotesApp {
     }
 
     createNoteCard(note) {
-        const date = new Date(note.updatedAt);
-        const formattedDate = this.formatDate(date);
+        const createdDate = new Date(note.createdAt);
+        const updatedDate = new Date(note.updatedAt);
+        const formattedCreatedDate = this.formatDate(createdDate);
+        const formattedUpdatedDate = this.formatDate(updatedDate);
         const previewContent = note.content.length > 200 
             ? note.content.substring(0, 200) + '...' 
             : note.content;
 
         const highlightedTitle = this.highlightText(note.title, this.searchQuery);
         const highlightedContent = this.highlightText(previewContent, this.searchQuery);
+
+        const isEdited = note.createdAt !== note.updatedAt;
+        const dateInfo = isEdited 
+            ? `Created: ${formattedCreatedDate} • Updated: ${formattedUpdatedDate}`
+            : `Created: ${formattedCreatedDate}`;
 
         return `
             <div class="note-card" data-note-id="${note.id}">
@@ -283,7 +317,7 @@ class NotesApp {
                 </div>
                 <div class="note-card-content">${highlightedContent}</div>
                 <div class="note-card-footer">
-                    Last updated: ${formattedDate}
+                    ${dateInfo}
                 </div>
             </div>
         `;

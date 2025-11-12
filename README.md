@@ -9,6 +9,8 @@ A local-first, minimalist note-taking web application with full CRUD operations 
 - **Update Notes**: Edit existing notes (both title and content)
 - **Delete Notes**: Remove notes with confirmation dialog
 - **Search**: Search through notes by keywords in both title and content with highlighting
+- **Sort Notes**: Sort by date (newest/oldest) or title (A-Z/Z-A)
+- **Date Display**: Shows creation date and last updated date for each note
 - **Local Storage**: All notes are stored locally in the browser (no server required)
 - **Responsive Design**: Works on desktop and mobile devices
 - **Minimalist UI**: Clean, distraction-free interface
@@ -47,6 +49,15 @@ A local-first, minimalist note-taking web application with full CRUD operations 
 3. Matching keywords are highlighted in yellow
 4. Search works on both title and content
 5. Click the "×" button to clear the search
+
+### Sorting Notes
+1. Use the "Sort by" dropdown in the header
+2. Choose from:
+   - **Newest First**: Sort by creation date (most recent first)
+   - **Oldest First**: Sort by creation date (oldest first)
+   - **Title (A-Z)**: Sort alphabetically by title
+   - **Title (Z-A)**: Sort reverse alphabetically by title
+3. Sorting works with search results too
 
 ## Architecture
 
